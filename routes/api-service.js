@@ -82,6 +82,51 @@ router.delete('/todo/:id', function(req, res) {
   });
 });
 
+router.get('/Oauth/Logout', function(req, res, next) {
+  res.clearCookie("accessToken");
+  res.clearCookie("userID");
+  var resObject = { Success : true };
+  res.json(resObject);
+});
+router.post('/Oauth/Facebook', function(req, res, next) {
+  var reqObject = req.body;
+    res.cookie( "accessToken", reqObject.authResponse.accessToken);
+    res.cookie( "userID", reqObject.authResponse.userID);
+    res.json(reqObject.authResponse);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 router.get('/devprofile', function(req, res, next) {
   var users =  [{
     Id : 1,
