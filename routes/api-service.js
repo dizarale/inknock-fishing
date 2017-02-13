@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var mongojs = require('mongojs');
+var graph = require('fbgraph');
+
+var userclass = require('./objects/userclass');
+
 var db = mongojs('mongodb://admin:admin123@ds037827.mongolab.com:37827/ng2todoapp', ['todos']);
 /* GET All Todos */
 router.get('/todos', function(req, res, next) {
@@ -81,7 +85,31 @@ router.delete('/todo/:id', function(req, res) {
     }
   });
 });
+/* Initial */
 
+router.get('/Init/Home', function(req, res, next) {
+  var resObject = {};
+  if(typeof req.cookies.accessToken !== "undefined"){
+    resObject.User = {}
+    graph.setAccessToken(req.cookies.accessToken);
+    graph.setVersion("2.8");
+    graph.get("me?fields=id,name,birthday,email,gender,picture", function(err, res2) {
+      if(err){
+      }else{
+        res2.accessToken = req.cookies.accessToken;
+        var userObject = new userclass(res2);
+        resObject.User = userObject;
+        res.json(resObject);
+      }
+    });
+  }else{
+    res.json(resObject);
+  }
+});
+
+
+
+/* */
 router.get('/Oauth/Logout', function(req, res, next) {
   res.clearCookie("accessToken");
   res.clearCookie("userID");
@@ -90,9 +118,19 @@ router.get('/Oauth/Logout', function(req, res, next) {
 });
 router.post('/Oauth/Facebook', function(req, res, next) {
   var reqObject = req.body;
-    res.cookie( "accessToken", reqObject.authResponse.accessToken);
-    res.cookie( "userID", reqObject.authResponse.userID);
-    res.json(reqObject.authResponse);
+  var resObject = {}
+  res.cookie( "accessToken", reqObject.authResponse.accessToken);
+  graph.setAccessToken(reqObject.authResponse.accessToken);
+  graph.setVersion("2.8");
+  graph.get("me?fields=id,name,birthday,email,gender,picture", function(err, res2) {
+    if(err){
+    }else{
+      res2.accessToken = req.cookies.accessToken;
+      var userObject = new userclass(res2);
+      resObject.User = userObject;
+      res.json(resObject);
+    }
+  });
 });
 
 

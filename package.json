@@ -13,6 +13,7 @@
     "cookie-parser": "^1.4.3",
     "ejs": "^2.5.5",
     "express": "^4.14.0",
+    "fbgraph": "^1.4.1",
     "mongojs": "^2.4.0",
     "morgan": "^1.7.0",
     "path": "^0.12.7"
